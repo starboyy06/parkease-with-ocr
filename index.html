@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Park Ease - Smart Parking System</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚗 Park Ease</h1>
+            <p id="liveClock">Easy Parking With Smart Slot Allocation</p>
+        </div>
+
+        <div class="main-content">
+            <div class="control-panel">
+                <div class="section">
+                    <h3>🅿️ Vehicle Check-in</h3>
+                    <div class="form-group">
+                        <label for="carNumber">Car Number Plate:</label>
+                        <input type="text" id="carNumber" placeholder="e.g., MH02FM1234">
+                    </div>
+                    <div class="form-group">
+                        <label for="vehicleType">Vehicle Type:</label>
+                        <select id="vehicleType" onchange="updateParkingGrid()">
+                            <option value="car">Car - ₹60/hour</option>
+                            <option value="bike">Bike - ₹30/hour</option>
+                            <option value="truck">Truck/Bus - ₹100/hour</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="duration">Expected Duration (hours):</label>
+                        <input type="number" id="duration" value="2" min="1" max="24">
+                    </div>
+                    <button class="btn" onclick="checkInVehicle()">🎫 Check-in & Get Slot</button>
+                    <button class="btn" id="captureBtn">📷 Capture Plate</button>
+                    <button class="btn" id="uploadBtn">📁 Upload Plate Image</button>
+                    <input type="file" id="uploadPlate" accept="image/*" style="display: none;">
+                    <div id="cameraContainer" style="display: none;">
+                        <video id="video" width="320" height="240" autoplay></video>
+                        <button class="btn" id="takePhoto">Take Photo</button>
+                        <canvas id="canvas" width="320" height="240" style="display: none;"></canvas>
+                    </div>
+                </div>
+
+                <div class="section search-section" id="searchSection">
+                    <h3>🔍 Find Parked Vehicle</h3>
+                    <div class="form-group">
+                        <label for="searchCar">Search by Car Number:</label>
+                        <input type="text" id="searchCar" placeholder="Enter car number">
+                    </div>
+                    <button class="btn" onclick="searchVehicle()">Search Vehicle</button>
+                    <div id="searchResult"></div>
+                </div>
+
+                <div class="section">
+                    <h3>🚪 Vehicle Check-out</h3>
+                    <div class="form-group">
+                        <label for="checkoutCar">Car Number Plate:</label>
+                        <input type="text" id="checkoutCar" placeholder="e.g., MH02FM1234">
+                    </div>
+                    <button class="btn btn-checkout" onclick="checkOutVehicle()">🚗 Check-out Vehicle</button>
+                </div>
+
+                <div class="section">
+                    <h3>🔧 System Management</h3>
+                    <button class="btn" onclick="printParkingReport()">📊 Print Parking Report</button>
+                    <button class="btn" onclick="exportParkingData()">💾 Export Data</button>
+                    <input type="file" id="importFile" style="display: none;" onchange="importParkingData(event)">
+                    <button class="btn" onclick="document.getElementById('importFile').click()">📥 Import Data</button>
+                    <button class="btn" onclick="showAnalytics()">📈 View Analytics</button>
+                    <button class="btn btn-checkout" onclick="resetParkingSystem()">🗑️ Reset System</button>
+                </div>
+
+                <div class="section">
+                    <h3>📜 Parking History</h3>
+                    <button class="btn" onclick="toggleParkingHistory()">View Parking History</button>
+                    <button class="btn btn-print-small" onclick="printParkingHistory()">🖨️ Print History</button>
+                    <div id="parkingHistoryContainer" style="display: none;"></div>
+                </div>
+
+                <div id="receiptContainer"></div>
+                <div id="alertContainer"></div>
+                <div id="analyticsContainer" style="display: none;"></div>
+            </div>
+
+            <div class="parking-grid">
+                <div class="grid-header">
+                    <h2>🏢 Parking Slots Status</h2>
+                    <div class="stats">
+                        <div class="stat-item">
+                            <div class="stat-number" id="totalSlots">100</div>
+                            <div class="stat-label">Total Slots</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="availableSlots">100</div>
+                            <div class="stat-label">Available</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="occupiedSlots">0</div>
+                            <div class="stat-label">Occupied</div>
+                        </div>
+                    </div>
+                </div>
+
+                <p>🟢 Available &nbsp; 🔴 Occupied</p>
+
+                <div id="slotsContainer" class="slots-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
